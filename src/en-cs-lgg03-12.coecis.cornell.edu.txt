@@ -1,9 +1,0 @@
-en-cs-lgg03-12.coecis.cornell.edu
-"my_computer.local"
-
-
-your_hostname="my_computer.local"
-
-your_ip="128.84.103.248" 
-
-128.84.103.248 
