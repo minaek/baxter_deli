@@ -1,0 +1,154 @@
+#!/usr/bin/env python
+
+import sys
+import time
+import rospy
+from std_msgs.msg import UInt32
+from msg_types import *
+
+
+def wait():
+    raw_input("Press Enter to continue...")
+
+def send_voice(msg):
+    print "Baxter: %s" % index_to_string[msg]
+    voice_pub.publish(data = msg)
+
+
+def arm_give_cookie():
+    print "<give customer a cookie>"
+    pass # do arm command
+
+
+def arm_give_sandwich():
+    print "<give customer a sandwich>"
+    pass # do arm command
+
+
+def arm_give_condiment():
+    print "<give customer a condiment>"
+    pass # do arm command
+
+
+def arm_take_pos():
+    print "<hand item to Baxter>"
+    pass # do arm command
+
+
+def arm_reset_cookie():
+    print "<put cookie back>"
+    pass # do arm command
+
+
+def arm_reset_sandwich():
+    print "<put sandwich back>"
+    pass # do arm command
+
+
+def arm_reset_condiment():
+    print "<put condiment back>"
+    pass # do arm command
+
+
+def run_cookie():
+    send_voice(V_WELCOME)
+    wait()
+    send_voice(V_GET_ORDER)
+    wait()
+    send_voice(V_GIVE_ORDER)
+    wait()
+    arm_give_cookie()
+
+
+def run_A():
+    print "Condition A"
+    run_cookie()
+    wait()
+
+    send_voice(V_WELCOME)
+    wait()
+    send_voice(V_GET_ORDER)
+    wait()
+    arm_give_sandwich()
+    arm_give_condiment()
+    wait()
+    send_voice(V_GIVE_ORDER)
+
+
+def run_B():
+    print "Condition B"
+    run_cookie()
+    wait()
+
+    send_voice(V_WELCOME)
+    wait()
+    send_voice(V_GET_ORDER)
+    wait()
+    arm_give_sandwich()
+    arm_give_condiment()
+    wait()
+    send_voice(V_GIVE_ORDER)
+
+
+def run_C():
+    print "Condition C"
+    run_cookie()
+    wait()
+
+    send_voice(V_WELCOME)
+    wait()
+    send_voice(V_GET_ORDER)
+    wait()
+    send_voice(V_WARN)
+    wait()
+    arm_give_sandwich()
+    arm_give_condiment()
+    wait()
+    send_voice(V_GIVE_ORDER)
+
+
+def reset():
+    print "Reset food"
+    arm_take_pos()
+    wait()
+    arm_reset_cookie()
+    arm_take_pos()
+    wait()
+    arm_reset_sandwich()
+    arm_take_pos()
+    wait()
+    arm_reset_condiment()
+    print "Finished reset."
+
+
+def run_condition(cond):
+    if cond == 'A':
+        run_A()
+    elif cond == 'B':
+        run_B()
+    elif cond == 'C':
+        run_C()
+    elif cond == 'r':
+        reset()
+    else:
+        print "Invalid condition: %s (enter only A, B, or C)" % condition
+        sys.exit(2)
+
+
+if __name__ == "__main__":
+    rospy.init_node('run_condition')
+    voice_pub = rospy.Publisher('/voice', UInt32, queue_size=10)
+    time.sleep(1)
+
+    # TODO: set up Baxter
+
+    # Read condition
+    if len(sys.argv) < 2:
+        print "Please specify a condition (A, B, C, or reset)"
+        sys.exit(1)
+
+    condition = sys.argv[1][0]
+
+    run_condition(condition)
+
+    time.sleep(2)
